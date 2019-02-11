@@ -1,11 +1,12 @@
-1. How to start
+#1. How to start
 
 There is a software operation video in the HOW-TO-START directory. Through this video, you will know how to run the XXSim model directly, and how to convert the Eclipse model into XXSim model and run it ( the conversion of CMG model is similar to the operation of Eclipse model ).
 
-2. Update history
+#2. Update history
 
-2018/05/31  GUI New Features of v1.5
+##2018/05/31  New Features for v1.5
 
+###GUI
 The most important update is the release of a bata version of CMG to XXSim converter with following basic features:
   
 1) the standard black oil model (IMEX);
@@ -20,7 +21,7 @@ The most important update is the release of a bata version of CMG to XXSim conve
  
 6) fixed the bug of the model directory that can not take the space character.
  
-XXSIM New Features:,
+###XXSIM core:
  
 1) added multiple pvt tables for black oil;
  
@@ -33,11 +34,11 @@ XXSIM New Features:,
 5) added Restart option.
 
 
-2018/01/02  New for v1.1.1
+##2018/01/02  New for v1.1.1
 1) Added the conversion of Eclipse keyword SWATINIT;
 2) Fixed some bugs;
 
-2017/12/12  New for v1.1
+##2017/12/12  New for v1.1
 
 New features of XXSim and Eclipse to XXSim converter:
 

@@ -1,8 +1,16 @@
 # 1. How to start
 
-There is a software operation video in the HOW-TO-START directory. Through this video, you will know how to run the XXSim model directly, and how to convert the Eclipse model into XXSim model and run it ( the conversion of CMG model is similar to the operation of Eclipse model ).
+There is a software operation video in the HOW-TO-START directory which shows how to run the XXSim model directly, and how to convert the Eclipse model into XXSim model and run it ( the conversion of CMG model is similar to the operation of Eclipse model ).
 
 # 2. Update history
+
+## 2019/02/10  New Features for v1.6
+1) fixed the bug of NNC (non neighbor connection);
+
+2) fixed thermal MB errors;
+
+3) fixed the gas cap initialization error;
+
 
 ## 2018/05/31  New Features for v1.5
 

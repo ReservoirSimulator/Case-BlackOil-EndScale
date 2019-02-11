@@ -1,0 +1,204 @@
+TITLE1  SPE3  COMPARATIVE SOLUTION PROJECT
+TITLE2  FLUID CHARACTERIZED With 9 COMPONENTS  ( No. 1 )
+
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            DEBUG   # ZAXIS_DOWN
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     0     0     0      0    0     0   1   0   0     0     0       0
+#DATACHECK   # Check data only!
+#NOSIM  # same as DATACHECK
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 9  NY  9   NZ 4
+NWMAX  2   
+NCOMP 9  NCMAX  10    # By Default: NCMAX = NCOMP + 1, add water as 1 extra component
+NSEPMAX  3   #Default 6, Maximum 4 stages of each
+#The Default Separator will be the last one if separator (NSEPMAX)  is not defined
+EOSCOMP
+FIRSTDAY   1980  01  01
+################### GRID SECTION #######################
+GRID             # "GRID" INDICATES THE END OF I/O & DIMENSION SECTIONS,
+                 #AND THE BEGING OF THE STATIC SECTION, MUST LEAVE IT ALONE
+CARTESIAN
+DX  CON   293.3
+DY  CON   293.3
+DZ ZVAR   30.  30.0  50.  50.
+POROSITY   CON   0.13
+KX  ZVAR 130.0  40.0  20.0  150.
+KY  ZVAR 130.0  40.0  20.0  150.
+KZ  ZVAR 13.0    4.0   2.0  15.0
+CROCK   CON    4.0E-6  #1/PSI
+TOPS    CON    7315.
+
+#
+##################### PVT SECTION #######################
+PVT    
+PREOS          
+#
+PCUNIT  PSIA  
+TCUNIT  rankin
+COMPONENTS CO2	        N2	C1	C2	C3	C4-6	C7+1	C7+2	C7+3                                               
+    MFG   0.0121	0.0194	0.6599	0.0869	0.0591	0.0967	0.04745	0.01515	0.0033
+    MW    44.01 	28.013	16.043	30.07	44.097	66.8694	107.7794 198.562 335.1979
+    TC	  548.46	227.16	343.08	549.77	665.64	806.54	838.11	1058.04	1291.89
+    PC	  1071.33	492.31	667.78	708.34	618.7	514.93	410.75	247.56	160.42
+    ZCEOS 0.27408	0.29115	0.28473	0.28463	0.27748	0.2764	0.2612	0.22706	0.20137
+    AC	  0.225	        0.04	0.013	0.0986	0.1524	0.21575	0.3123	0.5567	0.91692
+OMEGAA  0.4572355 0.4572355 0.534021 0.4572355 0.4572355 0.4572355 0.6373344 0.6373344 0.6373344
+OMEGAB  6*0.0777961 	0.0872878	0.0872878	0.0872878
+HCID       2*0  7*1
+#HCID = Hydrocarbon Indicator, optional
+#Binary Interaction Coefficients
+KIJ
+0								
+-0.02	0							
+0.1	0.036	0						
+0.13	0.05	0	0					
+0.135	0.08	0	0	0				
+0.1277	0.1002	0.09281	0	0	0			
+0.1	0.1	0.130663	0.006	0.006	0	0		
+0.1	0.1	0.130663	0.006	0.006	0	0	0	
+0.1	0.1	0.130663	0.006	0.006	0	0	0	0
+
+#
+PSTD  14.7  TSTD  60   #Define Standard Conditions, 14.7 Psia & 60 Deg F are defaults
+PSAT      3442.7   # INITIAL SATURATION PRESSURE
+CW        3.0E-6   # Water Compressibility
+BWI       0.9909   # (rb/stb), Bwi = 1 + CT(1)*(TRES-TREF), Bw = DENWST/DENW = BWI*[1-CW*(P-REFERPW)], this case DENW = 63
+REFERPW    3550    # Reference pressure for water compressibility (psi)
+VIS_WAT    0.31    # Initial water viscosity (cp)
+CVISW      0.00    # Slope of water viscosity (cp/psi)
+#
+###############################################################################
+RELPERM   TABLE  1
+STONE2
+WATER-OIL
+# SW     KRW      KROW      PCOW  (PSIA)
+ .16     0.0     .8       50.
+ .2       .002   .65      32.
+ .24      .01    .513     21.
+ .28      .02    .4       15.5
+ .32      .033   .315     12.0
+ .36      .049   .25       9.2
+ .4       .066   .196      7.0
+ .44      .09    .15       5.3
+ .48      .119   .112      4.2
+ .52      .15    .082      3.4
+ .56      .186   .06       2.7
+ .60      .227   .04       2.1
+ .64      .277   .024      1.7
+ .68      .33    .012      1.3
+ .72      .39    .005      1.0
+ .76      .462   0.0        .7
+ .8       .54    0.0        .5
+ .84      .62    0.0        .4
+ .88      .71    0.0        .3
+ .92      .8     0.0        .2
+ .96      .9     0.0        .1
+1.00     1.0     0.0       0.0
+
+#
+#GAS-OIL RELATIVE PERMEABILITY TABLE
+#
+GAS-LIQUID   
+#SLIQ    KRG    KROG    PCOG (PSIA)
+0.16	0.74	0	0
+0.2	0.68	0	0
+0.24	0.62	0	0
+0.28	0.562	0	0
+0.32	0.505	0	0
+0.36	0.45	0	0
+0.4	0.4	0	0
+0.44	0.348	0.005	0
+0.48	0.3	0.012	0
+0.52	0.26	0.024	0
+0.56	0.222	0.04	0
+0.6	0.187	0.06	0
+0.64	0.156	0.082	0
+0.68	0.126	0.112	0
+0.72	0.1	0.15	0
+0.76	0.078	0.196	0
+0.8	0.058	0.25	0
+0.84	0.04	0.315	0
+0.88	0.026	0.4	0
+0.92	0.013	0.513	0
+0.96	0.005	0.65	0
+1	0	0.8	0
+############### EQUILLIBRATION SECTION #################
+EQUIL  MODEL  1
+# INITIAL RESERVOIR CONDITIONS
+SW    CON   0.15  
+SG    CON   0.85
+PRESI   CON  3550.0 
+TRESI   CON  200.0  
+#GASMF   0.6793  0.0990  0.1108  0.0450  0.052966  0.011941  0.000993
+# GASMF INDICATES THAT A GAS CONDESATE WILL BE INITIALIZED
+# OILMF INDICATES THAT A VOLATILE OIL  WILL BE INITIALIZED
+PCGRAVITY#
+DEPTH  7500.  DWOC 7500.  DGOC  7500. PCWOC  0.  PCGOC  0.0
+SEPARATOR   1  3
+    STAGE   1     2    3
+    PSEP   815   65   14.7
+    TSEP   80.   80.  60.
+#used for initialization or production
+
+############### SOLUTION SECTION #######################
+SOLUTION  
+MAXPRES  9014.7  
+FLASHNR  30
+RELTOL  0.0001 
+#ORTHOMIN #DEFAULT 
+#GMRESrp
+############### RECURRENT SECTION #######################
+RUN             #"RUN" INDICATES THE END OF STATIC INPUT SECTION,
+                #AND BEGING OF THE RECURRENT SECTION, MUST LEAVE IT ALONE
+#
+
+WELSPECS
+        WELL 1  'PROD1'  PRODUCER   VERTICAL  7   7  OPEN
+        WELL 2  'INJE1'  INJECTOR   VERTICAL  1   1  TOTALMOB  #default is endpoint mobility  
+#
+OPERATION  
+        WELL 2  'INJE1'  BHP  4000.0   MAXGAS  4700.0   IBAT  1  # MSCF = 100 MMSCF
+#       WELL 2  'INJE1'  YINJ 0.0121	0.0194	0.6599	0.0869	0.0591	0.0967	0.04745	0.01515	0.0033 
+        WELL 2  'INJE1'  YINJ 9*0.0    #automatical gas cycling
+        WELL 1  'PROD1'  BHP   500.0   MAXGAS  6200.0  IBAT  1  
+#
+ECOLIMITS
+        WELL 1  'PROD1'  WGORLIM  120.0  # MSCF/STB
+# 
+COMPLETION
+        WELL 2  'INJE1'  RW   1.0   DPUMP  7330. 
+#                 Layer   KH   SKIN  WLENGTH  V-ANGLE AZIMUTH	 
+        WPIV_KXYH    1   3900    0.0    0.0      0.0     0.0  
+        WPIV_KXYH    2   1200    0.0    0.0      0.0     0.0  
+#
+#
+        WELL 1  'PROD1'  RW   1.0   DPUMP  7400.
+#                 Layer   KH   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH    3   1000   0.0    0.0      0.0     0.0
+        WPIV_KXYH    4   7500   0.0    0.0      0.0     0.0
+
+SEPARATOR   1  3
+    STAGE   1     2    3
+    PSEP   815	 65	 14.7
+    TSEP   80	   80	  60
+
+SEPARATOR   2  3
+    STAGE   1     2    3
+    PSEP   315	 65	 14.7
+    TSEP   80	   80	  60
+      
+TUNING  
+DT0 1.0 
+DTMAX 100.0
+DATE  1980  2  1
+DATE  1980  3  1
+DATE  1990  01  01
+OPERATION  
+        WELL 2  'INJE1'  BHP  4000.0   MAXGAS  0.0   IBAT  1  # MSCF = 100 MMSCF
+DATE  1995  01  01
+
+STOP

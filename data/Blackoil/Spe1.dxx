@@ -1,0 +1,166 @@
+TITLE1  SPE1  COMPARATIVE SOLUTION PROJECT
+TITLE2  CASE 1
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            # ZAXIS_DOWN
+PRINTGRID   13*0
+#PAUSE 
+#DATACHECK   
+
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 10  NY  10   NZ 3
+NCMAX  3    NWMAX  2  
+BLACKOIL 
+FIRSTDAY   1980  01  01
+################### GRID SECTION #######################
+GRID             # "GRID" INDICATES THE END OF I/O & DIMENSION SECTIONS,
+                 #AND THE BEGING OF THE STATIC SECTION, MUST LEAVE IT ALONE
+CARTESIAN
+DX  CON   1000.
+DY  CON   1000.
+DZ ZVAR   20.  30.0  50.
+POROSITY   CON  .3043  # 0.3
+KX  ZVAR 500.0  50.0  200.0
+KY  ZVAR 500.0  50.0  200.0
+KZ  ZVAR  60.0  45.0   19.75
+CROCK   CON    3.0E-6  #1/PSI
+TOPS    CON    8325.
+
+#
+##################### PVT SECTION #######################
+PVT             
+#
+COMPONENTS  H2O     HOIL       SGAS
+#          -----   ------      ----
+MW         18.015   210.0      22.9674
+COMPRESS   2.88E-6  1.3687E-5  0  
+CTEXP      0        3.8E-5     0.00038  
+DENSITY    64.79    49.111     0.0605438    
+#64.79 = 62.238*1.041; 49.111 = 1.062*46.244;  0.0605438 = 0.0647*0.166666/0.178107
+GRAVITY    1.0383   0.7411     0.7928
+PHASE_ID   WATER    OIL       GAS
+PTAB     RSO      BO      DENO       BG        RG     VIS_OIL   VIS_GAS
+# (psi)  (scf/stb) (rb/stb)  (lbm/SCF) (rb/SCF)  (Mg/Ma)   (cp)      (cp)  
+    14.70     1.0   1.062    46.244    166.67E-3  0.7928   1.04      0.0080
+   264.70    90.5   1.150    43.544    12.093E-3  0.7928   0.9750    0.0096
+   514.70   180.0   1.207    42.287    6.2740E-3  0.7928   0.9100    0.0112
+  1014.70   371.0   1.295    41.004    3.1970E-3  0.7928   0.8300    0.0140
+  2014.70   636.0   1.435    38.995    1.6140E-3  0.7928   0.6950    0.0189
+  2514.00   775.0   1.500    38.304    1.2940E-3  0.7928   0.6410    0.0208
+  3014.70   930.0   1.565    37.381    1.0800E-3  0.7928   0.5940    0.0228
+  4014.70  1270.0   1.695    37.046    0.8110E-3  0.7928   0.5100    0.0268
+  5014.70  1618.0   1.827    36.424    0.6490E-3  0.7928   0.4490    0.0309
+  9014.70  2984.0   2.357    34.482    0.3860E-3  0.7928   0.2030    0.0470
+
+# Rg:  Mollecular weight of gas @(P,T)/28.97, (M.W. of air)
+#        = Gas Gravity @ P=14.7 psi (101.325 kpa), T=60 F (15.5 C)
+# Rg is measured in Lab and given in forms of incremental and cumulative 
+# incremental values must be used.
+#  
+ PB       4014.7    # INITIAL BUBBLE POINT PRESSURE
+ BWI      1.0410    # Water formation volume factor (rb/stb)
+ REFERPW    14.7    # Reference pressure for water compressibility (psi)
+ VIS_WAT    0.31    # Initial water viscosity (cp)
+ CVISW      0.00    # Slope of water viscosity (cp/psi)
+ CVISO    4.6E-5    # Slope of viscosity above bubble point (cp/psi)
+ PUSAT    9014.7    # PRESSURE FOR UNDERSATURATED CONDITION, MUST > PB
+ BUSAT    1.5790    # OIL FVF AT PUSAT, BOTH PUSAT AND BUSAT MUST BE USED TO
+                    # OVERWRITE THE CO INPUTED USING "COMPRESS" CARD
+                    # CO = [1-BO(P)/BO(PB)]/(PUSAT-PB)
+#MUOSAT   0.74
+# END TESTING
+#WATER-OIL RELATIVE PERMEABILITY TABLE
+#
+RELPERM   TABLE  1
+STONE2
+WATER-OIL
+#     SW     KRW      KROW      PCOW  (PSIA)
+     0.120   0.000     1.000	0.00
+     0.980   0.000     1.000    0.00
+     0.990   0.000     1.000    0.00
+     1.000   1.000     0.000	0.00
+#
+#GAS-OIL RELATIVE PERMEABILITY TABLE
+#
+GAS-LIQUID   
+#SLIQ    KRG     KROG    PCOG (PSIA)
+0.00    1.00     0.000    0.0
+0.15    0.98     0.0      0.0 
+0.30    0.94     0.0      0.0 
+0.40    0.87     1.E-4    0.0
+0.50    0.72     0.001	  0.0
+0.55    0.60     0.01	  0.0
+0.60    0.41     0.021	  0.0
+0.70    0.19     0.09	  0.0
+0.75    0.125    0.2	  0.0
+0.80    0.075    0.35	  0.0
+0.88    0.025    0.7	  0.0
+0.95    0.005    0.98	  0.0
+0.98    0.0      0.997	  0.0
+0.999   0.0      0.9999	  0.0
+1.0     0.0      1.0	  0.0
+############### EQUILLIBRATION SECTION #################
+EQUIL  MODEL  1
+# INITIAL RESERVOIR CONDITIONS
+SW    CON   0.12  
+SO    CON   0.88
+PRESI   CON  4800.0 
+TRESI   CON  200.0    
+PCGRAVITY#
+DEPTH  8400.  DWOC 8450.  DGOC  8320. PCWOC  0.  PCGOC  0.0
+############### SOLUTION SECTION #######################
+SOLUTION    
+#NATURAL  # Matrix Ordering, generally slower than the default: Red-Black with ILU(1) as Preconditioner
+MAXPRES  9014.7   
+#NORTH  15  #Default 10
+#ORTHOMIN   #Default Solver option, others are: GMRESRP, GMRESLP, BICGSTABLP, BICGSTABRP
+RELTOL  0.0005  # Relative Iterative solver convegence error  ||R||/||R0|| < RELTOL, Default is 0.005
+
+############### RECURRENT SECTION #######################
+RUN             #"RUN" INDICATES THE END OF STATIC INPUT SECTION,
+                #AND BEGING OF THE RECURRENT SECTION, MUST LEAVE IT ALONE
+#
+WELSPECS
+        WELL 1  'INJE1'  INJECTOR   VERTICAL  1   1   OPEN  
+        WELL 2  'PROD1'  PRODUCER   VERTICAL  10  10  OPEN
+#
+OPERATION  
+        WELL 1  'INJE1'  BHP  10000.0  MAXGAS  1.0E5   # MSCF = 100 MMSCF
+        WELL 2  'PROD1'  BHP  1000.0   MAXOIL  20000.0  
+#
+ECOLIMITS
+        WELL 2  'PROD1'  WGORLIM  20.0  # MSCF/STB
+# 
+COMPLETION
+        WELL 1  'INJE1'  RW   0.25 
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH	 
+        WPIV_KXYH    1   -1.0    0.0    0.0      0.0     0.0  
+#
+        WELL 2  'PROD1'  RW   0.25 
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH    3   -1.0     0.0    0.0      0.0     0.0
+#  PERM'<0 INDICATES K*H IS BEING CALCULATED INTERNALLY; PERM'> or = 0: USER SPECIFIED KH
+
+NEWSOLVER  
+DT0 1.0 
+DTMAX 100.0
+w3d   1     #write out 3D arrays such P, So,Sw,.... for each date or time card
+wrst  1     #write out restart arrays such P, So,Sw, used for restart....
+DATE  1981  01  01
+DATE  1982  01  01
+DATE  1983  01  01
+DATE  1984  01  01
+DATE  1985  01  01
+NEWSOLVER  
+DT0 45.0 
+DTMAX 365.0
+w3d   tnext     #write out 3D arrays such P, So,Sw,....
+wrst  tnext     #write out restart arrays such P, So,Sw, used for restart....
+DATE  1986  01  01
+DATE  1987  01  01
+DATE  1988  01  01
+DATE  1989  01  01
+DATE  1990  01  01
+STOP

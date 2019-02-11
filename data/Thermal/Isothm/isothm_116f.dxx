@@ -1,0 +1,327 @@
+TITLE1  Test Isothermal Module of Thermal Model
+TITLE2  PVT Input Format: K-Value thermal, Live Oil
+TITLE3  Two Pseudo oil components: Dead Oil and Solution Gas  
+#
+# RESERVOIR FRACTURING IS INDUCED AT PRESSURES ABOVE 1200 PSIA.
+# SUPER-UPSTREAM WEIGHYTING USED ABOVE FRACTURE PRESSURES TO COMPUTE INTER-BLOCK
+# CONVECTIVE HEAT FLOW.
+#
+# STONE'S FIRST METHOD IS USED TO COMPUTE THE OIL RELATIVE PERMEABILITY
+#
+# CONGENEOUS RESERVOIR WITH VERTICAL PERMEABILITY = 1/2 HORIZONTAL PERMEABILITY
+#
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            ZAXIS_DOWN
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     0     1     1      1    1     1   1   1   1     1     1       1
+#SKIPGRID
+#DATACHECK  
+
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 2  NY  2    NZ 2
+NCOMP  2  NCMAX  3 
+NWMAX  2   
+NOBMAX  5  NUBMAX  5
+MAXPERFW  2    # Maximum Perforation per well
+MAXPERFS  4    # Total Perforations for all wells
+#THERMAL
+ISOTHM
+FIRSTDAY   1990  01  01
+##################### GRID SECTION #######################
+GRID
+CARTESIAN    # CYLINDRICAL COORDINATE SYSTEM
+DX  CON  32.808
+DY  CON  32.808
+DZ  CON  20.0
+POROSITY   CON  0.3
+PROCK    750
+KX  CON  200
+KY   =  KX 
+KZ   =  KX * 0.1
+ROCKTC     CON    24
+ROCKCP     CON    35
+CROCK    CON    5.E-4
+TOPS     CON    1500
+
+
+# OVERBURDEN/UNDERBURDEN ROCK THERMAL PROPERTIES
+OBTC   24   UBTC  24  OBCP  35   UBCP  35  
+#
+##################### PVT SECTION #######################
+PVT     #   COMPONENT PVT PROPERTIES
+PREOS
+TCUNIT  RANKIN
+COMPONENTS  H2O    HOIL     SGAS
+#          -----  ------   ------
+MW           0     463.093 36.8298
+PC           0      0       667.009
+TC           0      0       344.116   # Rankin
+COMPRESS     3.03E-6 3.54e-006 3.54e-006    
+CTEXP        0     0.00014 0.00014  
+#CPIG1        0     0.50      0.28
+DENSITY      62.805 58.2374 42.9396
+#VAPOR_HEAT   0     0         818.
+#PHASE_ID   water   oil      GAS 
+PHASE_ID      1      2       3 
+
+#  PHASE     W      O        G  
+#            ---   ---     -----
+#PVOLUME     0   0.01632   0.065  
+KV1          -1     1.     2.33047     
+KV2          0.0    0.0    63729.4 
+KV3          0.0    0.0    0.0102601 
+KV4          0.0    0.0    1583.98
+KV5          0.0    0.0    12.888
+PSAT 343
+#KV1          0        0
+
+#  VISCOSITY TABLES
+#
+VISOTABLE  1
+#T, deg F  H2O    HOIL       SGAS
+# --------  ----   ----       ----
+   41    2.52022   1959.48   309.686  
+   60    1.85655   1008.18   180.514  
+   80    1.42446   466.215   94.7368  
+  116.6  1.00000   180.460   42.2200  
+  150   0.712312   61.4165   17.8707  
+  200   0.506782   22.5171   7.96154  
+  230   0.423809   13.9189   5.42936  
+  300    0.30821   5.82469   2.73914  
+  347   0.262664   3.75262    1.9492  
+  400     0.2259   2.52772   1.44076  
+  450   0.198572   1.87063   1.14664  
+  482   0.185012   1.59191   1.01591  
+  550   0.157501   1.19379  0.819106  
+  600   0.143754    1.0047  0.720347  
+  645   0.132152    0.7161  0.539157  
+  690    0.12239  0.542594  0.425221  
+  735   0.113872  0.431433  0.349481  
+  780   0.106338  0.356462  0.296816  
+  825   0.099625  0.303736  0.258822  
+  870  0.0936068  0.265348  0.230561  
+  915  0.0881805  0.236582  0.208996  
+  960  0.0832629  0.214495  0.192181  
+ 1005  0.0787857  0.197183  0.178827  
+ 1050  0.0746923  0.183372  0.168051  
+ 1095  0.0709353  0.172184  0.159236  
+ 1140  0.0674749  0.163001  0.151938  
+ 1185  0.0642773  0.155374  0.145832  
+ 1230  0.0613137  0.148975  0.140676  
+ 1275  0.0585593  0.143557  0.136285  
+ 1320  0.0559927  0.138932  0.132518  
+ 1365  0.0535953  0.134956  0.129265  
+ 1410  0.0513509  0.131515  0.126438  
+ 1455  0.0492454  0.128519  0.123968  
+ 1500  0.0472662  0.125896  0.121799    
+#
+VISGTABLE  1
+# T, deg F  H2O    HOIL        SGAS
+# --------  ----   ----        ----
+   40.0    0   1.3768E-02     1.3768E-02
+   60.0    0   1.4191E-02     1.4191E-02
+   80.0    0   1.4613E-02     1.4613E-02
+  100.0    0   1.5035E-02     1.5035E-02
+  120.0    0   1.5458E-02     1.5458E-02
+  140.0    0   1.5880E-02     1.5880E-02
+  160.0    0   1.6303E-02     1.6303E-02
+  180.0    0   1.6725E-02     1.6725E-02
+  200.0    0   1.7147E-02     1.7147E-02
+  225.0    0   1.7675E-02     1.7675E-02
+  250.0    0   1.8203E-02     1.8203E-02
+  300.0    0   1.9259E-02     1.9259E-02
+  350.0    0   2.0315E-02     2.0315E-02
+  400.0    0   2.1371E-02     2.1371E-02
+  450.0    0   2.2427E-02     2.2427E-02
+  500.0    0   2.3483E-02     2.3483E-02
+  550.0    0   2.4539E-02     2.4539E-02
+  600.0    0   2.5595E-02     2.5595E-02
+  650.0    0   2.6651E-02     2.6651E-02
+  700.0    0   2.7707E-02     2.7707E-02
+  750.0    0   2.8763E-02     2.8763E-02
+  800.0    0   2.9819E-02     2.9819E-02
+  900.0    0   3.1931E-02     3.1931E-02
+ 1000.0    0   3.4043E-02     3.4043E-02
+ 1250.0    0   3.9323E-02     3.9323E-02
+ 1500.0    0   4.4603E-02     4.4603E-02        
+#
+PSTD       14.700   TSTD       60.000
+##################### RELPERM SECTION #######################
+RELPERM   TABLE  1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+STONE2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+WATER-OIL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+#$Sw   krw     krow   Pcow
+0.221	0.000	1.000   0.0
+0.227	0.000	0.978   0.0
+0.232	0.000	0.955   0.0
+0.238	0.001	0.933   0.0
+0.243	0.0015	0.911   0.0
+0.254	0.002	0.866   0.0
+0.265	0.003	0.822   0.0
+0.276	0.004	0.778   0.0
+0.287	0.006	0.734   0.0
+0.298	0.007	0.691   0.0
+0.309	0.009	0.647   0.0
+0.321	0.011	0.604   0.0
+0.332	0.012	0.562   0.0
+0.343	0.014	0.519   0.0
+0.354	0.016	0.477   0.0
+0.365	0.019	0.435   0.0
+0.376	0.021	0.394   0.0
+0.387	0.023	0.353   0.0
+0.398	0.026	0.312   0.0
+0.409	0.028	0.272   0.0
+0.420	0.031	0.232   0.0
+0.431	0.033	0.193   0.0
+0.442	0.036	0.155   0.0
+0.453	0.039	0.118   0.0
+0.464	0.042	0.081   0.0
+0.475	0.044	0.046   0.0
+0.486	0.047	0.014   0.0
+0.492	0.049	0.000   0.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+GAS-LIQUID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+#Sl   krg      krog    Pcog 
+0.48	0.9	0	0
+0.488	0.869	0.01	0
+0.6	0.498	0.033	0
+0.66	0.361	0.061	0
+0.695	0.295	0.085	0
+0.731	0.236	0.119	0
+0.779	0.17	0.183	0
+0.806	0.138	0.231	0
+0.828	0.115	0.278	0
+0.835	0.108	0.294	0
+0.841	0.102	0.309	0
+0.85	0.094	0.333	0
+0.86	0.085	0.361	0
+0.87	0.077	0.391	0
+0.879	0.069	0.42	0
+0.889	0.062	0.455	0
+0.9	0.054	0.495	0
+0.914	0.044	0.552	0
+0.929	0.035	0.618	0
+0.945	0.026	0.696	0
+1	0	1	0
+RELPERM   TABLE  2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+STONE2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+WATER-OIL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+0.233	0.000	1.000	6.687
+0.239	0.000	0.977	5.020
+0.244	0.000	0.954	4.086
+0.250	0.000	0.932	3.623
+0.256	0.000	0.909	3.326
+0.267	0.001	0.864	2.949
+0.278	0.002	0.819	2.708
+0.290	0.003	0.774	2.534
+0.301	0.004	0.730	2.401
+0.312	0.006	0.686	2.293
+0.324	0.008	0.642	2.204
+0.335	0.010	0.599	2.128
+0.346	0.013	0.556	2.063
+0.358	0.016	0.513	2.005
+0.369	0.019	0.471	1.954
+0.381	0.023	0.429	1.908
+0.392	0.028	0.387	1.867
+0.403	0.032	0.346	1.829
+0.415	0.037	0.306	1.794
+0.426	0.043	0.266	1.762
+0.437	0.048	0.226	1.733
+0.449	0.055	0.188	1.705
+0.460	0.061	0.150	1.679
+0.471	0.069	0.113	1.655
+0.483	0.076	0.078	1.632
+0.494	0.084	0.044	1.611
+0.505	0.093	0.013	1.591
+0.511	0.097	0.000	1.581                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+GAS-LIQUID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+0.48	0.9	0	0
+0.488	0.869	0.01	0
+0.6	0.498	0.033	0 
+0.66	0.361	0.061	0
+0.695	0.295	0.085	0
+0.731	0.236	0.119	0
+0.779	0.17	0.183	0
+0.806	0.138	0.231	0
+0.828	0.115	0.278	0
+0.835	0.108	0.294	0
+0.841	0.102	0.309	0
+0.85	0.094	0.333	0
+0.86	0.085	0.361	0
+0.87	0.077	0.391	0
+0.879	0.069	0.42	0
+0.889	0.062	0.455	0
+0.9	0.054	0.495	0
+0.914	0.044	0.552	0
+0.929	0.035	0.618	0
+0.945	0.026	0.696	0
+1	0	1	0
+
+SATNUM    CON  2        #Assign Relperm Table 2 for all cells
+
+#RELPERM   ANALYTICAL  1
+#STONE2
+#
+#SWCN    0.15    SORW   0.15   SORG    0.10   SGC   0.06  
+#KRWRO   0.1    KROCW   0.4   KRGRO    0.2    
+#NW      2.5     NOW    2.0    NOG     2.0    NG    1.5
+#
+############### EQUILLIBRATION SECTION #################
+EQUIL  USER   1  
+# INITIAL RESERVOIR CONDITIONS
+PRESI CON  750   TRESI   CON  116.6  
+SW  CON  0.30  SO  CON  0.70   ##PCGRAVITY WILL BE IGNORED !!!
+MOLE%  1    0.85   0.15
+#PCGRAVITY
+#DEPTH  1505  DWOC 1600  DGOC  1335 PCWOC  0.0  PCGOC  0.0  
+#
+############### SOLUTION SECTION #######################
+SOLUTION   
+#ninepoint
+NORTH 20
+MAXPRES  1500   MAXTEMP  700
+RELTOL  1E-4
+############### RECURRENT SECTION #######################
+RUN            # RECURRENT DATA FOLLOWS
+# RECURRENT DATA FOLLOWS
+
+WELSPECS
+
+WELL 1  'INJE1'  INJECTOR   VERTICAL  1   1   OPEN  TOTALMOB
+WELL 2  'PROD1'  PRODUCER   VERTICAL  2   2   OPEN
+#
+OPERATION
+
+WELL 1  'INJE1'  BHP  1130.0      MAXWATER  400.0   
+#WELL 1  'INJE1'  TINJ    550.0    QUALITY  0.7   # 70% cwestb steam only
+WELL 1  'INJE1'  TINJ    116.6                   # cold water only 
+
+WELL 2  'PROD1'  BHP  100.0       MAXLIQUID 600.0
+# 
+COMPLETION
+WELL   1  'INJE1'  RW  0.25  
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH  1:2   4000     0.0    0.0      0.0     0.0
+WELL   2  'PROD1'   RW  0.25  
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH  1:2   4000     0.0    0.0      0.0     0.0   
+
+#
+TUNING
+    DT0 0.001  DTMAX 1  DTF  2.0  #  2.0 is default, time step enlarge factor
+#	DPMAX  200  DTEMPMAX 50
+#            DSMAX  0.5 
+#            DSNRI 0.1    
+#            DPNRI 150.  
+#            DTNRI 100.  
+TIME 10.0
+TIME 20.0
+#TIME 25.0
+TIME 30.0
+TIME 40.0
+TIME 50.0
+TIME 60
+stop
+END

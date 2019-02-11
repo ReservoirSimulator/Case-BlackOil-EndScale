@@ -1,0 +1,230 @@
+TITLE1  Test Isothermal Module of K-Value Formulation
+TITLE2  Compositional Input Format: Internal Generated K-Values
+TITLE3  7 Pseudo Hydrocarbon components
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     0     0     1      1    1     1   1   1   1     1     1       1
+W3D  1
+#PAUSE 
+#DATACHECK   
+
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 10  NY  10   NZ 6 NWMAX  2   
+NCOMP 7  NCMAX  8    # By Default: NCMAX = NCOMP + 1, add water as 1 extra component
+#EOSCOMP       # Activate Compositional model ( Isothermal )
+ISOTHM         # Activate Thermal Model with Isothermal Module
+#FLASH3P   1   # Compositional with wog 3 phase flash, allow each component co-exist in each phase  
+FLASH2P  1   # Traditional oil-gas 2 phase flash (Water and Hydrocarbons are not mutually dissolved)
+#        1   indicates the first column inside EOS table is WATER COMPONENT, 0 means no WATER COMPONENT 
+FIRSTDAY   1980  01  01  # Starting date
+################### GRID SECTION #######################
+GRID             # "GRID" INDICATES THE END OF I/O & DIMENSION SECTIONS,
+                 #AND THE BEGING OF THE STATIC SECTION, MUST LEAVE IT ALONE
+CARTESIAN
+DX  CON   100
+DY  CON   100
+DZ ZVAR   10.0 10.0  15.0 15.0  25.0 25.0
+POROSITY   CON   0.30
+KX  ZVAR 500.0  500.0 50.0  50.0 200.0 200.0
+KY  ZVAR 500.0  500.0 50.0  50.0 200.0 200.0
+KZ  ZVAR 50.0  50.0  50.0 50.0 25.0 25.0
+CROCK   CON    5.0E-6  #1/PSI
+TOPS    CON    8335.
+
+#WINDOWS  1   2   4   2  4   1  1
+#
+##################### PVT SECTION #######################
+PVT
+PREOS          
+#
+PCUNIT  PSIA  
+TCUNIT  RANKIN
+#
+  COMPONENTS    H2O        CO2        C1         C3         NC6        NC10       NC15       C20       
+     MFO           1.00	      0.05	 0.45	    0.03       0.07	   0.2	     0.15	0.05
+      MW         18.015     44.010     16.040     44.100     86.180    142.290    212.410    275.000
+      TC       1164.870    547.570    343.070    665.670    913.370   1111.770   1270.080   1380.060
+      PC       3198.800   1070.000    667.800    616.300    436.900    304.000    200.000    162.000
+      ZCVIS     0.22950    0.27420    0.28900    0.28100    0.26400    0.24700    0.22900    0.22290
+      AC        0.32100    0.22500    0.01300    0.15240    0.30070    0.48850    0.65000    0.85000
+     VSF      -0.21098    0.00000    0.00000    0.00000    0.00000    0.00000    0.00000    0.00000
+  OMEGAA      0.457235485  0.457235485  0.457235485  0.457235485  0.457235485  0.457235485  0.457235485  0.457235485
+  OMEGAB      0.077796102  0.077796102  0.077796102  0.077796102  0.077796102  0.077796102  0.077796102  0.077796102
+WATAQ-COMP   1            2            3            0            4*0 # Component may appear and stay in Aqueous phase, 0=No
+    HCID        0           0         6*1
+ KIJ
+  0.0000
+  0.0000 0.0000
+  0.4800 0.0920 0.0000
+  0.4800 0.1240 0.0000 0.0000
+  0.4800 0.1000 0.0000 0.0000 0.0000
+  0.4800 0.1150 0.0000 0.0000 0.0000 0.0000
+  0.4800 0.1150 0.0500 0.0050 0.0000 0.0000 0.0000
+  0.4800 0.1150 0.0500 0.0050 0.0000 0.0000 0.0000 0.0000
+# 
+PSTD  14.7  TSTD  60   #Define Standard Conditions, 14.7 Psia & 60 Deg F are defaults
+#
+PSAT      2300.   # INITIAL SATURATION PRESSURE, Best Guess if measured data is not available
+DENW      62.4    # Water Density at Standard Condition
+ CW        3.3E-6   # Water Compressibility
+BWI       1.0244  # Water formation volume factor (rb/stb), Bwi = 1 + CT(w)*(Tres-Tsc), if Tref = Tsc and Pref = Psc
+#BWI        0.00    # Use internal CT(w) = f(T), Bwi = 1 + CT(w)*(Tres-Tsc), if Tref = Tsc and Pref = Psc
+#BWI       1.000    # Water formation volume factor (rb/stb), Bwi = 1 + CT(w)*(Tres-Tsc), if Tref = Tsc and Pref = Psc
+ #BWI = [1 + CT(w)*(Tres-Tref)] * [1 + CT(w)*(Tref-Tsc)] * [1.D0 - CP(w)*(Pref - Psc)] , if Tref > Tsc and Pref > Psc
+ REFERPW    14.7    # Reference pressure for water compressibility (psi)
+ VIS_WAT    0.70    # Initial water viscosity (cp)
+ CVISW      0.00    # Slope of water viscosity (cp/psi)
+# CVISO    4.6E-5   # Slope of oil viscosity above bubble point (cp/psi)
+
+REFERPRESS    3984.3   REFERTEMP  160.00
+# Generate all KV, Muoil, Mugas tables internally, using 2-phase flash
+GENTABLES    NPROWS   17    NTCOLUMNS   2   DPRES  400  DTEMP 100   # 160 F = 60 + 100
+#GENTABLES    NPROWS   17    DPRES  100    NTCOLUMNS   2   DTEMP 100   # 160 F = 60 + 100, bug, not working
+#GENTABLES    #bug, not working, got default NTCOLUMNS
+#NPROWS     17   DPRES  300  
+#NTCOLUMNS   2   DTEMP  100   # 160 F = 60 + 100
+###############################################################################
+RELPERM   TABLE  1
+STONE2
+WATER-OIL  
+# SW     KRW      KROW      PCOW  (PSIA)
+0.20    0.0       1.00       45.
+0.2899  0.0022    0.6769     19.03
+0.3778  0.0180    0.4153     10.07
+0.4667  0.0607    0.2178      4.90
+0.5556  0.1438    0.0835      1.80
+0.6444  0.2809    0.0123      0.50
+0.7000  0.4089    0.0         0.05
+0.7333  0.4855    0.0         0.01
+0.8222  0.7709    0.0         0.0
+0.9111  1.0000    0.0         0.0
+1.00    1.0000    0.0         0.
+
+#
+#GAS-OIL RELATIVE PERMEABILITY TABLE
+#
+GAS-LIQUID   
+#SLIQ    KRG    KROG    PCOG (PSIA)
+0.2	1	0	30
+0.2889	0.56	0	8
+0.35	0.39	0	4
+0.3778	0.35	0.011	3
+0.4667	0.2	0.037	0.8
+0.5556	0.1	0.0878	0.03
+0.6444	0.05	0.1715	0.001
+0.7333	0.03	0.2963	0.001
+0.8222	0.01	0.4705	0
+0.9111	0.001	0.7023	0
+0.95	0	0.88	0
+1	0	1	0
+#epsall 2
+############### EQUILLIBRATION SECTION #################
+#EQUIL  MODEL  1
+## INITIAL RESERVOIR CONDITIONS
+#SW    CON   0.20  
+#SO    CON   0.80
+#PRESI   CON  4000.0 
+#TRESI   CON  160.0    
+#PCGRAVITY#
+#DEPTH  8400.  DWOC 8450.  DGOC  8320. PCWOC  0.  PCGOC  0.0
+
+EQUIL  USER   1
+DEPTH   8320.
+TRESI   CON  160.0 
+SW    CON   0.20  
+SO    CON   0.80
+PRESI ZVAR  3984.3  3986.8 3990.3 3995.2 4000.0 4004.0
+############### SOLUTION SECTION #######################
+SOLUTION 
+
+#BICGSTABRP
+#GMRESRP
+#RELAXRES  10
+NORTH 30  #DEFAULT 10, Numer of Orthogonalizations
+#ORTHOMIN #DEFAULT: GMRES
+#NATURAL
+MAXPRES  15014.7   
+#SPEEDUP 1    # 
+#CONVERGE 1  # DEFAULT#
+RELTOL  0.005
+
+#Flash Method:  default is FLASHSS  30 starting with lower pressure, used in 2-phase flash only
+#then progressively increase to the desired pressure
+#FLASHSS  20        #Use SS method to detect 2 phases
+#FLASHNR  20        #Use NR method to detect 2 phases
+#FLASHSN  20         #Use SS + NR method to detect 2 phases
+#MAXFLASH 30        #Maximum Number of Flash, default 30
+
+############### RECURRENT SECTION #######################
+RUN             #"RUN" INDICATES THE END OF STATIC INPUT SECTION,
+                #AND BEGING OF THE RECURRENT SECTION, MUST LEAVE IT ALONE
+#
+
+WELSPECS
+        WELL 1  'INJE1'  INJECTOR   VERTICAL  3   3   OPEN  #TOTALMOB  #default is endpoint mobility
+        WELL 2  'PROD1'  PRODUCER   VERTICAL  8   8   OPEN
+#
+OPERATION  
+        WELL 1  'INJE1'  BHP  10000.0   MAXGAS  6000.0   #MSCF:  1 MSCF = 1000 SCF
+#COMPONENTS                    H2O  CO2   C1    C3     NC6   NC10  NC15  C20   
+        WELL 1  'INJE1'  YINJ   0.  0.85  0.10  0.05  0.00   0.    0.    0.   
+#
+        WELL 2  'PROD1'  BHP  1000.0   MAXOIL  12000.0  
+#
+ECOLIMITS
+        WELL 2  'PROD1'  WGORLIM  20.0  # MSCF/STB
+# 
+COMPLETION
+        WELL 1  'INJE1'  RW   0.25  DPUMP  8335
+#                 Layer   KH   SKIN  WLENGTH  V-ANGLE  AZIMUTH	 
+        WPIV_KXYH    1   5000    0.0    0.0      0.0     0.0  
+#
+        WELL 2  'PROD1'  RW   0.25  DPUMP  8400
+#                 Layer   KH   SKIN  WLENGTH  V-ANGLE  AZIMUTH
+        WPIV_KXYH    6   5000   0.0    0.0      0.0     0.0
+
+TUNING  
+DT0 0.01    # First time step size
+DTF  2.0   # Enlarge factor of time step size, defaults: Black Oil: 5.0; Compositioal and Thermal: 2.0
+DTMAX 31.0
+#DPMAX 500   DSMAX 0.30   DXMAX 0.30
+#DPNRI 200   DSNRI 0.10   DXNRI 0.10
+TIME 1
+TIME 2
+TIME 5
+TIME 18
+#stop
+TIME 37
+TIME  73.0
+TIME  126.0
+TIME  186.0
+TIME  264.0
+#TIME  289.0
+TIME  365.00
+#DATE  1980  12  31
+STOP
+
+DATE  1981   1   1
+DATE  1982   1   1
+DATE  1983   1   1
+DATE  1984   1   1
+DATE  1985   1   1
+DATE  1986   1   1
+DATE  1987   1   1
+DATE  1988   1   1
+DATE  1989   1   1
+DATE  1990   1   1
+DATE  1991   1   1
+DATE  1992   1   1
+DATE  1993   1   1
+DATE  1994   1   1
+DATE  1995   1   1
+DATE  1996   1   1
+DATE  1997   1   1
+DATE  1998   1   1
+DATE  1999   1   1
+DATE  2000   1   1
+STOP

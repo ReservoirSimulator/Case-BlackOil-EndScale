@@ -1,0 +1,395 @@
+#Important note for all tables:  Minimum 2 spaces and no TAB is allowed
+TITLE1  Test Example: Dry Gas (non-condensible) and Water System
+TITLE2  WATER-Gas Reservoir
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            DEBUG    ZAXIS_DOWN
+#PRINTGRID   13*0
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     1     0     1      1    1     1   1   1   1     1     1       0
+#DATACHECK   
+
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 2  NY  2   NZ 1
+NCMAX  2    NWMAX  2   
+#NOBMAX  5  NUBMAX  5
+MAXPERFW  1    # MAXIMUM PERFORATIONS PER WELL
+MAXPERFS  2    # MAXIMUM PERFORATIONS FOR ALL WELLS
+BLACKOIL  WATER-GAS
+FIRSTDAY   2000  01  01
+################### GRID SECTION #######################
+GRID             # "GRID" INDICATES THE END OF I/O & DIMENSION SECTIONS,
+                 #AND THE BEGING OF THE STATIC SECTION, MUST LEAVE IT ALONE
+CARTESIAN
+DX  CON   60.96074128    
+DY  CON   60.96074128
+DZ  CON   6.096074128
+POROSITY  CON  0.2
+KX  CON  1.0
+KY  CON  1.0
+KZ  CON  0.1
+
+CROCK   CON    1.45E-07  #1/KPA
+TOPS    CON  1828.822238
+
+#define print windows n output file
+#       #win  I1  I2  J1  J2  K1  K2
+#WINDOWS   1   1   5   1   5   10   10
+#
+##################### PVT SECTION #######################
+PVT             
+#
+COMPONENTS   H2O     DRYGAS    
+#          
+MW           18.015   26.65   #Best Guess
+COMPRESS     435E-7     21.05E-7     
+DENSITY      1024.491756      1.123739395   
+GRAVITY      1.025	  0.92 
+#PHASE_ID     water   GAS    
+PHASE_ID       1       3  
+PB   2068.4271
+  PTAB       BG          VIS_GAS   
+# (psi)    (rb/SCF)        (cp)   
+101.353	   1.19209	0.0125
+2068.427	0.06840	0.01609
+2757.903	0.05100	0.01617
+3447.379	0.04057	0.01627
+4136.854	0.03363	0.01637
+4826.330	0.02867	0.01649
+5515.806	0.02496	0.01661
+6205.281	0.02209	0.01674
+6894.757	0.01979	0.01689
+7584.233	0.01792	0.01704
+8273.708	0.01636	0.0172
+8963.184	0.01505	0.01738
+9652.660	0.01393	0.01757
+10342.136	0.01296	0.01776
+11031.611	0.01212	0.01797
+11721.087	0.01139	0.01819
+12410.563	0.01074	0.01842
+13100.038	0.01016	0.01866
+13789.514	0.00964	0.01891
+14478.990	0.00917	0.01917
+15168.465	0.00875	0.01945
+15857.941	0.00837	0.01972
+16547.417	0.00803	0.02001
+17236.893	0.00771	0.02031
+17926.368	0.00742	0.02061
+18615.844	0.00716	0.02092
+19305.320	0.00691	0.02124
+19994.795	0.00669	0.02156
+20684.271	0.00648	0.02189
+22063.222	0.00611	0.02256
+23442.174	0.00579	0.02324
+24821.125	0.00551	0.02394
+26200.077	0.00526	0.02464
+27579.028	0.00504	0.02534
+28957.979	0.00485	0.02604
+30336.931	0.00467	0.02673
+31715.882	0.00452	0.02742
+33094.834	0.00437	0.02811
+34473.785	0.00425	0.02879
+35852.736	0.00413	0.02945
+37231.688	0.00402	0.03011
+38610.639	0.00393	0.03076
+39989.591	0.00384	0.03139
+41368.542	0.00375	0.03201
+42747.493	0.00368	0.03263 
+#                 
+BWI      1.0142          # Water formation volume factor (rb/stb)
+REFERPW    101.325       # Reference pressure for water compressibility (psi)
+VIS_WAT    0.96          # Initial water viscosity (cp)
+CVISW      0.00          # Slope of water viscosity (cp/psi)
+PUSAT   42747.493          # PRESSURE FOR UNDERSATURATED CONDITION, MUST > PB
+BUSAT      1.014         # OIL FVF AT PUSAT, BOTH PUSAT AND BUSAT MUST BE USED TO
+                         # OVERWRITE THE COIL INPUTED USING "COMPRESS" CARD
+                         # COIL = [1-BO(P)/BO(PB)]/(PUSAT-PB)
+#WATER-GAS RELATIVE PERMEABILITY TABLE
+#
+RELPERM   TABLE  1
+#GAS-LIQUID   
+#    SLIQ    KRG      KROG      PCOG (PSIA)
+#     .22     1.0000  0.000      3.9
+#     .30     0.8125  0.000      3.5
+#     .40     0.5000  0.000      3.0
+#     .50     0.4200  0.000      2.5
+#     .60     0.3400  0.000      2.0
+#     .70     0.2400  0.020      1.5   
+#     .80     0.1000  0.100      1.0
+#     .90     0.0220  0.330      0.5
+#     .96     0.0000  0.600      0.2
+#    1.00     0.0000  1.000      0.0    
+#
+#In this case, Above original gas-liquid table is converted to a pseudo water-gas table
+#as water is wetting phase, so Krg = Krwg, PCWG	= PCOG
+WATER-GAS   
+#    SLIQ    KRW      Krwg      PCOG (PSIA)
+     .22     0.000    1.0000    3.9
+     .30     0.000    0.8125    3.5
+     .40     0.000    0.5000    3.0
+     .50     0.000    0.4200    2.5
+     .60     0.000    0.3400    2.0
+     .70     0.020    0.2400    1.5   
+     .80     0.100    0.1000    1.0
+     .90     0.330    0.0220    0.5
+     .96     0.600    0.0000    0.2
+    1.00     1.000    0.0000    0.0    
+#
+############### EQUILLIBRATION SECTION #################
+EQUIL  USER  1
+# INITIAL RESERVOIR CONDITIONS
+PRESI   CON  17581.630
+TRESI   CON  71.11111111 #Best Guess
+PCGRAVITY
+DEPTH  1828.822238  DWOC 2133.625945  DGOC  1828.822238  PCWOC  0.  PCGOC  0.0  
+SW  CON  0.22  
+SG  CON  0.78
+#SG  CON  0.00
+#SW,SO,SG are used, to overwrite the VERTICAL EQUILIBRATION
+#
+
+############### SOLUTION SECTION #######################
+SOLUTION
+NORTH 10
+MINSOLV  3   # Minimum iterations of solver, Default is 3 
+MAXSOLV  40  # Maximum iterations of solver, Default is 40 
+#NITMIN   2  # Minimum Newton iterations,   Default is 2 
+NITMAX   15  # Maximum Newton iterations,   Default is 15 
+RELTOL 0.005  # Relative Iterative solver convegence error  ||R||/||R0|| < RELTOL
+#NATURAL     # Natual ordering of Matrix, not recommended, Default is RBILU(1)
+#SPEEDUP  1  # will have larger time step, not necessary fast in CPU time
+#CONVERGE 1  # default 2
+MAXPRES  42747.493 # Caused problem when MAXPRES > the last pressure entry in PVT table, black oil case
+#
+############### RECURRENT SECTION #######################
+RUN             #"RUN" INDICATES THE END OF STATIC INPUT SECTION,
+                #AND BEGING OF THE RECURRENT SECTION, MUST LEAVE IT ALONE
+#
+WELSPECS
+WELL 1  'I1'   INJECTOR  VERTICAL  2   2  TOTALMOB  #FRAC  0.5  
+WELL 2  'P1'   PRODUCER  VERTICAL  1   1  TOTALMOB  #FRAC  0.5
+
+# 
+### DPUMP: Reference Depth for FBHP,  =9110.0 for this example
+### PERM'  >0, user specified; <0, take values from well blocks internally, 
+### PERM'  = (Kx*Ky*Kz)**(1/3) for H-Wells; =(Kx*Ky)**(1/2) for V-wells
+COMPLETION
+        WELL  1  'I1'  RW   0.25    DPUMP  6000.0   
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH	 
+        WPIV_KXYH  1:1   -1.0   0.0    0.0      0.0     0.0  
+#
+        WELL  2  'P1'  RW   0.50    DPUMP  6000.0 
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH  1:1   -1.0   0.0    0.0      0.0     0.0
+#
+#  PERM'<0 INDICATES K*H IS BEING CALCULATED INTERNALLY; PERM'> or = 0: USER SPECIFIED KH  
+
+OPERATION  
+ WELL  1   'I1'   BHP  68947.57 MAXWATER  2831.684396   #M3  
+ WELL  2   'P1'   BHP  300	 MAXGAS	 2831.684396   #MCF
+#						 
+##############################################################################################
+#  PUMP LOCATION ALWAYS BE ASSIGNED BY THE FIRST COMPLETION CARD.                            #
+############################################################################################## 
+NEWSOLVER
+DSMAX  0.5  DPMAX 500  DXMAX  0.10  # 0.2 is needed for stone2
+DTMAX 30.0
+DTMIN 0.01 
+DT0   1.0 
+TIME  15.
+stop
+TIME  75.
+TIME	85
+TIME	95
+TIME	105
+TIME	115
+TIME	125
+TIME	135
+TIME	145
+TIME	155
+TIME	165
+TIME	175
+TIME	185
+TIME	195
+TIME	205
+TIME	215
+TIME	225
+TIME	235
+TIME	245
+TIME	255
+TIME	265
+TIME	275
+TIME	285
+TIME	295
+TIME	305
+TIME	315
+TIME	325
+TIME	335
+TIME	345
+TIME	355
+TIME	365
+TIME	375
+TIME	385
+TIME	395
+TIME	405
+TIME	415
+TIME	425
+TIME	435
+TIME	445
+TIME	455
+TIME	465
+TIME	475
+TIME	485
+TIME	495
+TIME	505
+TIME	515
+TIME	525
+TIME	535
+TIME	545
+TIME	555
+TIME	565
+TIME	575
+TIME	585
+TIME	595
+TIME	605
+TIME	615
+TIME	625
+TIME	635
+TIME	645
+TIME	655
+TIME	665
+TIME	675
+TIME	685
+TIME	695
+TIME	705
+TIME	715
+TIME	725
+TIME	735
+TIME	745
+TIME	755
+TIME	765
+TIME	775
+TIME	785
+TIME	795
+TIME	805
+TIME	815
+TIME	825
+TIME	835
+TIME	845
+TIME	855
+TIME	865
+TIME	875
+TIME	885
+TIME	895
+TIME	905
+TIME	915
+TIME	925
+TIME	935
+TIME	945
+TIME	955
+TIME	965
+TIME	975
+TIME	985
+TIME	995
+TIME	1005
+TIME	1015
+TIME	1025
+TIME	1035
+TIME	1045
+TIME	1055
+TIME	1065
+TIME	1075
+TIME	1085
+TIME	1095
+TIME	1105
+TIME	1115
+TIME	1125
+TIME	1135
+TIME	1145
+TIME	1155
+TIME	1165
+TIME	1175
+TIME	1185
+TIME	1195
+TIME	1205
+TIME	1215
+TIME	1225
+TIME	1235
+TIME	1245
+TIME	1255
+TIME	1265
+TIME	1275
+TIME	1285
+TIME	1295
+TIME	1305
+TIME	1315
+TIME	1325
+TIME	1335
+TIME	1345
+TIME	1355
+TIME	1365
+TIME	1375
+TIME	1385
+TIME	1395
+TIME	1405
+TIME	1415
+TIME	1425
+TIME	1435
+TIME	1445
+TIME	1455
+TIME	1465
+TIME	1475
+TIME	1485
+TIME	1495
+TIME	1505
+TIME	1515
+TIME	1525
+TIME	1535
+TIME	1545
+TIME	1555
+TIME	1565
+TIME	1575
+TIME	1585
+TIME	1595
+TIME	1605
+TIME	1615
+TIME	1625
+TIME	1635
+TIME	1645
+TIME	1655
+TIME	1665
+TIME	1675
+TIME	1685
+TIME	1695
+TIME	1705
+TIME	1715
+TIME	1725
+TIME	1735
+TIME	1745
+TIME	1755
+TIME	1765
+TIME	1775
+TIME	1785
+TIME	1795
+TIME	1805
+TIME	1815
+TIME	1825
+TIME	1835
+TIME	1845
+TIME	1855
+TIME	1865
+TIME	1875
+TIME	1885
+TIME	1895
+TIME	1905
+TIME	1915
+TIME	1925
+TIME	1935
+TIME	1945
+TIME	1955
+TIME	1965
+TIME	1975
+TIME	1985
+STOP

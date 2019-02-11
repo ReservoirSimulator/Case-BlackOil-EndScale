@@ -1,0 +1,257 @@
+TITLE1     Coats 1D Co2 Flood study
+TITLE2     CO2, C1 and nC4 soluble in water
+TITLE3     3-Phase WOG EOS Flash fully coupled with 3-Phase Separator
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            DEBUG   # ZAXIS_DOWN
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     0     0     0      0    0     1   1   1   0     1     1       1
+#PAUSE 
+#DATACHECK   
+W3D 1
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 20  NY  1   NZ 1 NWMAX  2   
+NCOMP 4  NCMAX  5    # By Default: NCMAX = NCOMP + 1, add water as 1 extra component
+NCAQUMAX  5	     # Maximum Number of components allowed to dissolve in Aqueous Phase, default NCMAX
+EOSCOMP     # DEFAULT IS FULLY IMPLICIT  
+FLASH3P     # Compositional with wog 3 phase flash, allow each component co-exist in each phase  
+FIRSTDAY   1986  01  01
+################### GRID SECTION #######################
+GRID             # "GRID" INDICATES THE END OF I/O & DIMENSION SECTIONS,
+                 #AND THE BEGING OF THE STATIC SECTION, MUST LEAVE IT ALONE
+CARTESIAN
+DX  CON   12.5
+DY  CON   100.0
+DZ  CON   50.0
+POROSITY   CON   0.20
+KX  CON  2000.0  
+KY  CON  2000.0  
+KZ  CON  2000.0  
+CROCK   CON    4.0E-6  #1/PSI
+TOPS    CON    100.
+
+#
+##################### PVT SECTION #######################
+PVT
+PREOS          
+#
+PCUNIT  PSIA  
+TCUNIT  RANKIN
+
+COMPONENTS    H2O      CO2       CH4     NC4     NC10      
+   MFO        1.00     0.001	   0.199    0.2     0.60    
+   MW	       18.015    44.010    16.04   58.12    142.29 
+   TC	       1164.87   547.57    343.07	 765.37   1111.77   
+   PC	       3198.80   1070.0    667.8   550.7     304    
+   ZCEOS       0.2295    0.2742    0.289	 0.274    0.247    
+   AC	       0.321     0.2250    0.013  0.2015    0.4885  
+  VSF        5*0.0000                        # VSF water = 0.0: Auto Adjust for water internally
+ OMEGAA	   5*0.457235485
+ OMEGAB	   5*0.077796102
+ # Note: if WATAQ-COMP >0, then this Component may appear and stay in Aqueous phase, otherwis Not allowed.
+ WATAQ-COMP   1            2            3            4            0 
+ #Notes:
+ # Component order: Water must be the first, then the light ones can dissolve in water, then others
+ # for each component:  Bin(1,IC) = WATAQ-BIN1*[Tc(IC)/Tc(1)]**2 + WATAQ-BIN3*Tc(IC)/Tc(1) + WATAQ-BIN3
+ # However, the original Kij/bic for water-HC are still needed for lquid-vapor 2 phase flash
+ # Only CO2, CH4 and NC4 are allowed to dissolve in water phase,  WATAQ-BIN1,2,3 are defaulted for CH4 and NC4
+ 
+#
+KIJ
+  0.00000
+  0.00000 0.00000
+  0.48000 0.12000 0.00000
+  0.48000 0.12000 0.00000 0.00000
+  0.48000 0.12000 0.00000 0.01000 0.00000	
+#
+PSTD  14.7  TSTD  60   #Define Standard Conditions, 14.7 Psia & 60 Deg F are defaults
+#
+ PSAT      1900   # INITIAL SATURATION PRESSURE
+ CW        3.0E-6   # Water Compressibility
+ BWI       1.000    # Water formation volume factor (rb/stb)
+ REFERPW    1900    # Reference pressure for water compressibility (psi)
+ VIS_WAT    0.3995  # Initial water viscosity (cp)
+ CVISW      0.00    # Slope of water viscosity (cp/psi)
+# CVISO    4.6E-5   # Slope of oil viscosity above bubble point (cp/psi)
+#PEDERSEN1
+###############################################################################
+RELPERM   TABLE  1
+STONE2
+WATER-OIL
+# SW     KRW      KROW                  PCOW  (PSIA)
+  .20000000   .00000000  1.00000000      0
+  .21250000   .00006265   .96891333      0
+  .22500000   .00035438   .93815563      0
+  .23750000   .00097656   .90773047      0
+  .25000000   .00200469   .87764152      0
+  .26250000   .00350205   .84789257      0
+  .27500000   .00552427   .81848755      0
+  .28750000   .00812161   .78943055      0
+  .30000000   .01134023   .76072577      0
+  .31250000   .01522310   .73237760      0
+  .32500000   .01981057   .70439058      0
+  .33750000   .02514077   .67676943      0
+  .35000000   .03125000   .64951905      0
+  .36250000   .03817291   .62264458      0
+  .37500000   .04594275   .59615133      0
+  .38750000   .05459150   .57004489      0
+  .40000000   .06415003   .54433105      0
+  .41250000   .07464818   .51901593      0
+  .42500000   .08611487   .49410588      0
+  .43750000   .09857821   .46960763      0
+  .45000000   .11206549   .44552819      0
+  .46250000   .12660333   .42187500      0
+  .47500000   .14221769   .39865587      0
+  .48750000   .15893388   .37587908      0
+  .50000000   .17677670   .35355339      0
+  .51250000   .19577035   .33168811      0
+  .52500000   .21593860   .31029313      0
+  .53750000   .23730469   .28937905      0
+  .55000000   .25989145   .26895718      0
+  .56250000   .28372127   .24903968      0
+  .57500000   .30881618   .22963966      0
+  .58750000   .33519779   .21077133      0
+  .60000000   .36288737   .19245009      0
+  .61250000   .39190586   .17469281      0
+  .62500000   .42227386   .15751800      0
+  .63750000   .45401167   .14094614      0
+  .65000000   .48713929   .12500000      0
+  .66250000   .52167643   .10970519      0
+  .67500000   .55764254   .09509072      0
+  .68750000   .59505680   .08118988      0
+  .70000000   .63393815   .06804138      0
+  .71250000   .67430526   .05569102      0
+  .72500000   .71617661   .04419417      0
+  .73750000   .75957042   .03361965      0
+  .75000000   .80450472   .02405626      0
+  .76250000   .85099732   .01562500      0
+  .77500000   .89906582   .00850517      0
+  .78750000   .94872764   .00300703      0
+  .80000000  1.00000000   .00000000      0
+
+#
+#GAS-OIL RELATIVE PERMEABILITY TABLE
+#
+GAS-OIL   
+#Sg              KRG        KROG       PCOG (PSIA)
+  .00000000   .00000000  1.00000000      0 
+  .01666667   .00000000   .97222222      0
+  .03333333   .00000000   .94444444      0
+  .05000000   .00000000   .91666667      0
+  .06666667   .00000000   .88888889      0
+  .08333333   .00000000   .86111111      0
+  .10000000   .00000000   .83333333      0
+  .11666667   .00000000   .80555556      0
+  .13333333   .00000000   .77777778      0
+  .15000000   .00000000   .75000000      0
+  .16666667   .00065746   .72222222      0
+  .18333333   .00262985   .69444444      0
+  .20000000   .00591716   .66666667      0
+  .21666667   .01051940   .63888889      0
+  .23333333   .01643655   .61111111      0
+  .25000000   .02366864   .58333333      0
+  .26666667   .03221565   .55555556      0
+  .28333333   .04207758   .52777778      0
+  .30000000   .05325444   .50000000      0
+  .31666667   .06574622   .47222222      0
+  .33333333   .07955293   .44444444      0
+  .35000000   .09467456   .41666667      0
+  .36666667   .11111111   .38888889      0
+  .38333333   .12886259   .36111111      0
+  .40000000   .14792899   .33333333      0
+  .41666667   .16831032   .30555556      0
+  .43333333   .19000657   .27777778      0
+  .45000000   .21301775   .25000000      0
+  .46666667   .23734385   .22222222      0
+  .48333333   .26298488   .19444444      0
+  .50000000   .28994083   .16666667      0
+  .51666667   .31821170   .13888889      0
+  .53333333   .34779750   .11111111      0
+  .55000000   .37869822   .08333333      0
+  .56666667   .41091387   .05555556      0
+  .58333333   .44444444   .02777778      0
+  .60000000   .47928994   .00000000      0
+  .61666667   .51545036   .00000000      0
+  .63333333   .55292571   .00000000      0
+  .65000000   .59171598   .00000000      0
+  .66666667   .63182117   .00000000      0
+  .68333333   .67324129   .00000000      0
+  .70000000   .71597633   .00000000      0
+  .71666667   .76002630   .00000000      0
+  .73333333   .80539119   .00000000      0
+  .75000000   .85207101   .00000000      0
+  .76666667   .90006575   .00000000      0
+  .78333333   .94937541   .00000000      0
+  .80000000  1.00000000   .00000000      0
+############### EQUILLIBRATION SECTION #################
+#EQUIL  MODEL  1
+## INITIAL RESERVOIR CONDITIONS
+#SW    CON   0.20  
+#SO    CON   0.80
+#PRESI   CON  4000.0 
+#TRESI   CON  160.0    
+#PCGRAVITY#
+#DEPTH  8400.  DWOC 8450.  DGOC  8320. PCWOC  0.  PCGOC  0.0
+EQUIL  USER   1
+
+DEPTH   100.
+TRESI   CON  160.0 
+ 
+SW    CON   0.5  
+SO    CON   0.5
+PRESI CON  1900. 
+############### SOLUTION SECTION #######################
+SOLUTION   
+#COMPINV   2
+NITMIN 2
+MAXPRES  2500  
+NORTH 30
+#SPEEDUP 1    # 
+#CONVERGE 1  # DEFAULT#
+############### RECURRENT SECTION #######################
+RUN             #"RUN" INDICATES THE END OF STATIC INPUT SECTION,
+                #AND BEGING OF THE RECURRENT SECTION, MUST LEAVE IT ALONE
+#
+
+WELSPECS
+        WELL 1  'INJE1'  INJECTOR   VERTICAL  1   1   TOTALMOB  #default is endpoint mobility
+        WELL 2  'PROD1'  PRODUCER   VERTICAL  20  1   OPEN
+#
+OPERATION  
+        WELL 1  'INJE1'  BHP  10000.0   MAXGAS  93.02   #MSCF:  1 MSCF = 1000 SCF
+        WELL 1  'INJE1'  YINJ 0.0  1.0  0.  0.  0.  
+#
+        WELL 2  'PROD1'  BHP  1900.0   MAXLIQUID  80.0 
+# 
+COMPLETION
+        WELL 1  'INJE1'  RW   0.25   DPUMP  125   # =depth of block center
+#                 Layer  PERM'   SKIN  WLENGTH  V-ANGLE  AZIMUTH
+        WPIV_KXYH    1   -1      0.0    0.0      0.0     0.0  
+#
+        WELL 2  'PROD1'  RW   0.25   DPUMP  125   # =depth of block center
+#                 Layer  PERM'   SKIN  WLENGTH  V-ANGLE  AZIMUTH
+        WPIV_KXYH    1    -1     0.0    0.0      0.0     0.0
+
+NEWSOLVER  
+DT0 0.01 
+DTMAX 10.0
+DTMIN 0.0001
+DPMAX 500   DSMAX 0.30   DXMAX 0.3
+#DPNRI 200   DSNRI 0.05  
+TIME  1
+TIME  5
+TIME  10
+TIME  20
+TIME  30
+TIME  40.0
+#TIME  45.0
+TIME  50.0
+TIME  60.0
+TIME  70.0
+TIME  80.0
+TIME  90.0
+TIME  100.0
+STOP
+

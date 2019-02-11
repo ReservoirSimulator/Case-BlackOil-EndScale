@@ -1,0 +1,163 @@
+TITLE1     Generate K-Values and rDensity Tables Internally using PR EOS
+TITLE2     Oil and Gas Viscosity tables Generated using LBC Correlation
+#
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            ZAXIS_DOWN
+#           P/Psat, PV, TO/TU, DenW, DenO, Deng, Sw, So, Sg, Visw, Viso, Visg,  Moles
+PRINTGRID     1     0     1     1      1    1     1   1   1   1     1     1       1
+#DATACHECK  
+METRIC  BAR
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NX 20  NY  20    NZ 10
+NCOMP  7  NCMAX  8 
+NWMAX  5   
+NOBMAX  5  NUBMAX  5
+MAXPERFW  5    # Maximum Perforation per well
+MAXPERFS  30   # Total Perforations for all wells
+THERMAL
+FLASH2P  1 # 1: The first column in following Component table is water  
+#FLASH3P    # Compositional with wog 3 phase flash, allow each component co-exist in each phase 
+FIRSTDAY   2007  01  01
+##################### GRID SECTION #######################
+GRID
+CARTESIAN    # CYLINDRICAL COORDINATE SYSTEM
+DX  CON  30
+DY  CON  30
+DZ  CON  20.0
+POROSITY   CON  0.2
+KX  CON  100
+KY  CON  100
+KZ  CON  10
+ROCKTC     CON    345
+ROCKCP     CON    2780
+PROCK    150
+CROCK    CON    5.E-5
+TOPS     CON    1000
+
+# OVERBURDEN/UNDERBURDEN ROCK THERMAL PROPERTIES
+# Use Defaults 
+#
+##################### PVT SECTION #######################
+PVT
+PREOS
+PCUNIT  BAR
+TCUNIT  KELVIN
+  COMPONENTS    H2O        'CO2'	   'N2'	   'C1'	   'C2'	   'C3'	   'C6'	   'C7'      
+     MFO        1.00000  0.010030	0.002079	0.167182	0.090348	0.167109	0.429973	0.133279
+	  TC	    0.00000    304.7000	126.200	190.600	305.430	369.800	507.500	548.000
+	  PC	    0.00000    73.8659	33.9439	46.0421	48.8387	42.4552	30.1037	29.3843
+      MW	    0.00000    44.0100	28.0130	16.0430	30.0700	44.0970	84.0000	96.0000
+      ZCEOS    0.2295     0.2741	 0.2912	 0.2847	 0.2846	 0.2762	 0.2504	 0.2528   # Original Zc = P*Vc/(R*Tc)
+      ZCVIS    0.00000     0.2741	 0.2912	 0.2847	 0.2846	 0.2762	 0.2504	 0.2528   # Used for LBC Viscosity Correlation
+      AC      0.00000     0.2250	 0.0400	 0.0130	 0.0986	 0.1524	 0.2990	 0.3000
+     VSF      8*0.00000   
+PARACHOR      0.00000     78.00	   41.00	 77.00	 108.00	 150.30	 271.00	 312.50
+  OMEGAA      8*0.457235529  
+  OMEGAB      8*0.077796074 
+   CPIG1        0     0.83494465	1.04183785	2.18304811	1.704497593	1.627337747	1.656895189	0.781387444
+   CPIG2        0     0.001031171	 -3.63E-05	0.003503149	0.00466305	0.005051631	0.004977904	0.003091402 
+VAPOR_HEAT      0     176.0885682	0	0	235.9958606	351.3134329	381.9413814	389.7099691 
+# Both Oil compressibility and thermal expansion coefficients will be generated internally by EOS
+#COMPRESS       0     0.000279722	0.000348616	0.00022092	0.000191332	0.001120028	0.00023319	0.000190586
+#CTEXP          0     0.003483023	5.61E-03	  0.003385582	0.002164145	0.004132961	0.001231099	0.001055508
+ #
+ KIJ
+  0.0000
+  0.5000 0.0000
+  0.4800 0.0000 0.0000
+  0.4800 0.0000 0.0000 0.0000
+  0.4800 0.0000 0.0000 0.0000 0.0000
+  0.4800 0.0000 0.0000 0.0000 0.0000 0.0000
+  0.4800 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+  0.4800 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+# Lorentz-Bray-Clark Viscosity Correlation Coefficients
+VIS_LBC5     0.1023 0.023364 0.058533 -0.040758 0.0093324
+
+PSAT      100.     # INITIAL SATURATION PRESSURE 
+#Define Standard Conditions, 14.7 Psia & 60 Deg F are defaults
+PSTD          1.01325   TSTD       15.5555556
+REFERPRESS    1.01325   REFERTEMP  15.5555556
+# Generate all KV, Muoil, Mugas tables internally, using 2-phase flash
+GENTABLES    NPROWS   12    NTCOLUMNS   10   DPRES  10  DTEMP 10
+##################### RELPERM SECTION #######################
+RELPERM   TABLE  1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+STONE2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+WATER-OIL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+#Sw   krw     krow   Pcow
+0.01	0	0.7	0
+0.2	0	0.6	0
+0.4	0.01	0.4	0
+0.6	0.2	0.1	0
+0.8	0.8	0.05	0
+1	1	0	0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+GAS-OIL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+#Sg   krg      krog    Pcog 
+0	0	0.7	0
+0.1	0	0.6	0
+0.2	0.05	0.4	0
+0.4	0.1	0.1	0
+0.6	0.4	0.05	0
+0.8	0.6	0	0
+0.99	0.7	0	0
+############### EQUILLIBRATION SECTION #################
+EQUIL  MODEL   1  
+# INITIAL RESERVOIR CONDITIONS
+PRESI CON  80   TRESI   CON  50  
+SW  CON  0.30  SO  CON  0.70   ##PCGRAVITY WILL BE IGNORED !!!
+
+PCGRAVITY
+DEPTH  1010  DWOC 1200  DGOC  999 PCWOC  0.0  PCGOC  0.0  
+#
+############### SOLUTION SECTION #######################
+SOLUTION   
+#ninepoint
+NORTH 20
+MAXPRES  150   MAXTEMP  200
+RELTOL  1E-4
+############### RECURRENT SECTION #######################
+RUN            # RECURRENT DATA FOLLOWS
+# RECURRENT DATA FOLLOWS
+
+WELSPECS
+
+WELL 1  'P'  PRODUCER   VERTICAL  9   9   OPEN
+#
+OPERATION
+WELL 1  'P'  BHP  40.0       MAXLIQUID 0.0
+# 
+COMPLETION
+WELL   1  'P'   RW  0.3  
+#                    K   PERM'   SKIN  WLENGTH  V-ANGLE AZIMUTH
+        WPIV_KXYH    1   -1.0     0.0    0.0      0.0     0.0   
+#
+TUNING
+    DT0 1  DTMAX 20  DTF  2.0  #  2.0 is default, time step enlarge factor
+#	DPMAX  200   # Maximum pressure change per Time Step
+#   DTEMPMAX 50  # Maximum temperature changes per Time Step
+#   DSMAX  0.5   # Maximum saturation change per Time Step
+#   DSNRI 0.1    # Maximum saturation change per NR Iteration
+#   DPNRI 150.   # Maximum pressure change per NR Iteration
+#   DTNRI 100.   # Maximum temperature changes per NR Iteration
+TIME 1.0
+OPERATION
+WELL 1  'P'  BHP  40.0       MAXLIQUID 6000.0
+#TIME 5.0
+#TIME 10.0
+TIME 21.0
+#TIME 30.0
+TIME 41.0
+#TIME 50.0
+TIME 61
+#stop
+TIME 81
+TIME 101
+TIME 121
+TIME 141
+TIME 161
+TIME 181
+TIME 201
+STOP
+END

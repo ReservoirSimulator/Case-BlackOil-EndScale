@@ -1,0 +1,222 @@
+TITLE1  CYCLIC STEAM  --- 13X1x4 R-Z GRID --- DEAD OIL
+TITLE2  Live Oil
+TITLE3  Paper SPE13510 ?      
+#
+##################### I/O SECTION #######################
+IO_CONTROL
+            SUMMARY   
+            ZAXIS_DOWN
+
+#DATACHECK  
+
+############# DYNAMIC DIMENSIONING SECTION ##############
+DIMENSION
+NR 13  NTHETA   1    NZ 4
+NCMAX  3    NWMAX  4   
+NOBMAX  5  NUBMAX  5
+THERMAL
+FIRSTDAY   1990  01  01
+##################### GRID SECTION #######################
+GRID
+RADIAL    # CYLINDRICAL COORDINATE SYSTEM
+RW 0.3
+#RRING: RADIUS OF EACH RING
+RRING RVAR 3.0 13.0  23.0  33.0 43.0 53.0 63.0 73.0 83.0 93.0 103.0 143.0 263.0
+#DR RVAR 20. 40. 60. 80. 100. 120. 140. 160. 190. 300.
+DY  CON   360.
+DZ  ZVAR   10.  20.0  25.0  25.0
+POROSITY   CON  0.3
+KR   ZVAR   2000  500  1000  2000
+KY   =  KR 
+KZ   =  KR * 0.5
+ROCKTC     CON    24
+ROCKCP     CON    35
+PROCK    75
+CROCK    CON    5.E-4
+TOPS     CON    1500
+
+# OVERBURDEN/UNDERBURDEN ROCK THERMAL PROPERTIES
+OBTC   24   UBTC  24  OBCP  35   UBCP  35  
+#
+##################### PVT SECTION #######################
+PVT     #   COMPONENT PVT PROPERTIES
+PREOS
+TCUNIT  RANKIN
+COMPONENTS  H2O    HOIL     SGAS
+#          -----  ------   ------
+MW           0     450      30
+PC           0     140      225.
+TC           0     1409.67  479.67 
+COMPRESS     0     5E-5   5.0E-5  
+CTEXP        0     0.00037   0.00036   
+CPIG1        0     0.55      0.53
+DENSITY      0     45        23
+VAPOR_HEAT   0     0         818.
+#PHASE_ID   water   oil      GAS 
+PHASE_ID      1      2       3 
+ 
+#COMPONENTS:  WATER    HOIL     SGAS
+KV1          0          1.     0     
+KV2          0         2.4E6    1.70E5   # Unit: PSIA
+KV4          0         20000    3000     # Unit: R
+#
+VISOTABLE  1
+# T, deg F    WATER    HOIL     SGAS
+# VIS_UNIT   CP         CP       CP 
+  75.       0         5780.     2.3
+ 100.       0         1380.     2.0
+ 150.       0          187.     1.5
+ 200.       0           47.     1.2
+ 250.       0           17.4    0.9
+ 300.       0            8.5    0.7
+ 350.       0            5.2    0.6
+ 500        0            2.5    0.3
+#
+VISGTABLE  1
+# T, deg F    WATER    HOIL     SGAS
+# VIS_UNIT   CP         CP       CP 
+ 75           0        0.0143   0.0143
+100           0        0.0149   0.0149
+150           0        0.0161   0.0161
+200           0        0.0172   0.0172
+250           0        0.0184   0.0184
+300           0        0.0196   0.0196
+350           0        0.0207   0.0207
+500           0        0.0241   0.0241
+##################### RELPERM SECTION #######################
+
+RELPERM   TABLE   1
+STONE2
+WATER-OIL
+#SW     KRW      KROW   PCWO  (PSIA)
+0.450	0.000	0.400	0.000
+0.490	0.001	0.324	0.000
+0.530	0.002	0.256	0.000
+0.570	0.005	0.196	0.000
+0.610	0.010	0.144	0.000
+0.650	0.018	0.100	0.000
+0.690	0.028	0.064	0.000
+0.730	0.041	0.036	0.000
+0.770	0.057	0.016	0.000
+0.810	0.077	0.004	0.000
+0.850	0.100	0.000	0.000
+1.000	0.101	0.000	0.000
+#
+#GAS-OIL RELATIVE PERMEABILITY TABLE
+#
+GAS-OIL   
+#SGAS    KRG  KROG  PCOG (PSIA)
+0.000	0.000	0.400	0.000
+0.060	0.003	0.332	0.000
+0.109	0.006	0.270	0.000
+0.158	0.018	0.215	0.000
+0.207	0.033	0.166	0.000
+0.256	0.051	0.124	0.000
+0.305	0.071	0.087	0.000
+0.354	0.093	0.057	0.000
+0.403	0.117	0.033	0.000
+0.452	0.143	0.016	0.000
+0.501	0.171	0.005	0.000
+0.550	0.200	0.000	0.000
+1.000	0.201	0.000	0.000
+#
+############### EQUILLIBRATION SECTION #################
+EQUIL  MODEL   1  
+# INITIAL RESERVOIR CONDITIONS
+PRESI CON  75   TRESI   CON  75.0  
+SW  CON  0.45  SO  CON  0.55
+MOLE%  1  0.3  0.7
+PCGRAVITY
+DEPTH  1505  DWOC 1600  DGOC  1500 PCWOC  0.0  PCGOC  0.0  
+#
+############### SOLUTION SECTION #######################
+SOLUTION     
+MAXPRES  1500   MAXTEMP  700
+#ORTHOMIN #DEFAULT 
+#GMRESrp
+############### RECURRENT SECTION #######################
+RUN            # RECURRENT DATA FOLLOWS
+# RECURRENT DATA FOLLOWS
+
+WELSPECS
+WELL 1  'INJE1'  INJECTOR   VERTICAL  1   1   OPEN
+WELL 2  'PROD1'  PRODUCER   VERTICAL  1   1   SHUT
+#
+OPERATION
+WELL 1  'INJE1'  BHP  1000.0      MAXWATER  1000.0   
+WELL 1  'INJE1'  TINJ    450.0    QUALITY  0.7    
+WELL 2  'PROD1'  BHP  17.0        MAXLIQUID 0.0
+# 
+COMPLETION
+WELL   1  'INJE1'  RW  0.30   
+#             LAYER   WPI     SKIN
+   WPIV_USER    1     88      4*0.0
+   WPIV_USER    2     44      4*0.0
+   WPIV_USER    3     110     4*0.0
+   WPIV_USER    4     220     4*0.0
+
+WELL   2  'PROD1'  RW  0.30  
+#             LAYER   WPI     SKIN
+   WPIV_USER    1     88      4*0.0
+   WPIV_USER    2     44      4*0.0
+   WPIV_USER    3     110     4*0.0
+   WPIV_USER    4     220     4*0.0
+#
+#----------------------- FIRST CYCLE ------------
+  TUNING
+            DT0 0.01
+#           DPMAX 200  
+#            DSMAX  1.1 
+#            DSITN 0.3    
+#            DPITN 150.  
+#            DTITN 150.  
+#TIME  0.01
+TIME  10.0
+#STOP
+  OPERATION
+            WELL 1  'INJE1'  MAXWATER  0.0    #  BHP  2000.0
+  TUNING
+            DT0 7.0
+TIME  17.0
+
+  OPERATION
+            WELL 2  'PROD1'  MAXLIQUID  1000  BHP  17.0
+  TUNING
+  DT0  0.1  DTMAX  90.0
+TIME 365.0
+#----------------------- SECOND CYCLE ----------
+  OPERATION
+            WELL 1  'INJE1'  MAXWATER  1000    BHP  1000.0
+            WELL 2  'PROD1'  MAXLIQUID  0  BHP  17.0
+  TUNING
+            DT0 0.01 
+TIME  375
+  OPERATION
+            WELL 1  'INJE1'  MAXWATER  0.0   #   BHP  2000.0
+   TUNING
+            DT0 7.0 
+TIME  382
+     OPERATION
+            WELL 2  'PROD1'  MAXLIQUID  1000  BHP  17.0
+  TUNING
+  DT0  0.1  
+TIME  730.0
+#----------------------- THIRD CYCLE ----------
+  OPERATION
+            WELL      1      'INJE1'    MAXWATER  1000  BHP  1000.0
+            WELL      2      'PROD1'    MAXLIQUID 0     BHP  17.0
+  TUNING
+            DT0 0.01 
+TIME  740
+  OPERATION
+            WELL 1  'INJE1'  MAXWATER  0.0   #   BHP  2000.0
+   TUNING
+            DT0 7.0 
+TIME  747.0
+     OPERATION
+            WELL 2  'PROD1'  MAXLIQUID  1000  BHP  17.0
+  TUNING
+  DT0  0.1  
+TIME  1095.0
+STOP
+END

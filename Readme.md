@@ -1,1 +1,1 @@
-# XXSim cases of black oil, compositional and thermal model.
+# Eclipse format model of end-scale case.
